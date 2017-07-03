@@ -40,18 +40,21 @@ export default function ymapsTouchScroll(map, options = {}) {
     transition: 'opacity .1s ease-in-out'
   });
 
+  const mapMargin = map.margin.getMargin();
+  for (const i in mapMargin) mapMargin[i] += 20;
+
   const content = createEl('ymaps-touch-scroll-content', block, {
     position: 'absolute',
     top: '50%',
     left: '0',
-    padding: '20px',
     transform: 'translateY(-50%)',
     color: '#fff',
     textAlign: 'center',
     width: '100%',
     overflow: 'hidden',
     boxSizing: 'border-box',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    padding: mapMargin.join('px ') + 'px'
   });
 
   content.textContent = options.hasOwnProperty('text') ? options.text : 'Чтобы переместить карту проведите по ней двумя пальцами';
