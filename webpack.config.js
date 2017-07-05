@@ -1,18 +1,16 @@
 const webpack = require('webpack');
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   watchOptions: {
     ignored: /node_modules/
   },
-  entry: {
-    'ymaps-touch-scroll': './src/ymaps-touch-scroll.js',
-    'main': './src/main.js'
-  },
+  entry: './src/ymaps-touch-scroll.js',
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
+    filename: 'ymaps-touch-scroll.js',
+    path: path.resolve(__dirname, 'dist'),
+    library: 'ymapsTouchScroll',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
@@ -22,24 +20,12 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env']
+            presets: ['env'],
+            plugins: ['add-module-exports']
           }
         }
-      },
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: {
-            loader: 'css-loader',
-            options: {minimize: true}
-          }
-        })
       }
     ]
   },
-  plugins: [
-    new ExtractTextPlugin('styles.css'),
-    new webpack.optimize.UglifyJsPlugin()
-  ]
+  plugins: [new webpack.optimize.UglifyJsPlugin()]
 };
