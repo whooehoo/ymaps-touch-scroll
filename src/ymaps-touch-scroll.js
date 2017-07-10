@@ -1,7 +1,7 @@
-import isMobile from 'ismobilejs/isMobile.min';
+import isMobile from 'ismobilejs';
 
 export default function ymapsTouchScroll(map, options = {}) {
-  if (!isMobile.any || !map.behaviors.isEnabled('multiTouch')) return;
+  if (!isMobile || !isMobile.any || !map.behaviors.isEnabled('multiTouch')) return;
 
   map.behaviors.disable('drag');
 

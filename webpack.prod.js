@@ -1,5 +1,6 @@
+const webpack = require("webpack");
 const path = require("path");
-const WebpackShellPlugin = require("webpack-shell-plugin");
+const UnminifiedWebpackPlugin = require("unminified-webpack-plugin");
 
 module.exports = {
   entry: "./src/ymaps-touch-scroll.js",
@@ -25,8 +26,12 @@ module.exports = {
     ]
   },
   plugins: [
-    new WebpackShellPlugin({
-      onBuildEnd: ["cp ./dist/ymaps-touch-scroll.min.js ./docs/"]
-    })
-  ]
+    new webpack.optimize.UglifyJsPlugin({
+      comments: false
+    }),
+    new UnminifiedWebpackPlugin()
+  ],
+  externals: {
+    ismobilejs: 'isMobile'
+  }
 };

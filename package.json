@@ -1,11 +1,12 @@
 {
   "name": "ymaps-touch-scroll",
-  "version": "1.0.4",
-  "description": "Add touch description block with only multiTouch behavior in ymaps",
+  "version": "1.0.5",
+  "description": "Add touch description block with multiTouch behavior in ymaps",
   "main": "./dist/ymaps-touch-scroll.js",
+  "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
-    "prod": "webpack --env=prod --optimize-minimize",
-    "dev": "webpack --env=dev --watch"
+    "prod": "webpack --env=prod",
+    "dev": "webpack --env=dev"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "babel-loader": "^7.1.1",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-env": "^1.6.0",
+    "unminified-webpack-plugin": "^1.2.0",
     "webpack": "^3.1.0",
     "webpack-shell-plugin": "^0.5.0"
   },
