@@ -1,7 +1,7 @@
 {
   "name": "ymaps-touch-scroll",
-  "version": "1.0.5",
-  "description": "Add touch description block with multiTouch behavior in ymaps",
+  "version": "1.1.0",
+  "description": "Library add touch description block in ymaps on devices",
   "main": "./dist/ymaps-touch-scroll.js",
   "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
@@ -15,7 +15,8 @@
   "keywords": [
     "ymaps",
     "behavior",
-    "muliTouch"
+    "muliTouch",
+    "device"
   ],
   "author": "whooehoo",
   "license": "MIT",
