@@ -1,6 +1,4 @@
-const webpack = require("webpack");
 const path = require("path");
-const UnminifiedWebpackPlugin = require("unminified-webpack-plugin");
 
 module.exports = {
   watch: true,
@@ -9,8 +7,8 @@ module.exports = {
   },
   entry: "./src/ymaps-touch-scroll.js",
   output: {
-    filename: "ymaps-touch-scroll.min.js",
-    path: path.resolve(__dirname, "dist"),
+    filename: "ymaps-touch-scroll.bundle.js",
+    path: path.resolve(__dirname, "src"),
     library: "ymapsTouchScroll",
     libraryTarget: "umd"
   },
@@ -28,11 +26,5 @@ module.exports = {
         }
       }
     ]
-  },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      comments: false
-    }),
-    new UnminifiedWebpackPlugin()
-  ]
+  }
 };

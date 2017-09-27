@@ -1,7 +1,7 @@
 # ymaps-touch-scroll
 Library add touch description block in ymaps on devices
 
-![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/docs/gif.gif)
+![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/gif.gif)
 
 ## [DEMO](https://whooehoo.github.io/ymaps-touch-scroll/)
 

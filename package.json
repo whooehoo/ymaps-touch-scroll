@@ -5,8 +5,8 @@
   "main": "./dist/ymaps-touch-scroll.js",
   "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
-    "prod": "webpack --env=prod",
-    "dev": "webpack --env=dev"
+    "dev": "webpack --env=dev",
+    "prod": "webpack --env=prod && webpack --env=prod-bundle"
   },
   "repository": {
     "type": "git",
