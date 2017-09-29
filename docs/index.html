@@ -36,7 +36,10 @@
           zoom: 10
         });
 
-        ymapsTouchScroll(map);
+        ymapsTouchScroll(map, {
+          preventScroll: true,
+          preventTouch: true
+        });
       }
 
       ymaps.ready(mapInit);
