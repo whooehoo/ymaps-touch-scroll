@@ -6,13 +6,9 @@ export default function ymapsTouchScroll(map, options = {}) {
 
   if (!prevScroll && !prevTouch) return;
 
-  prevScroll && map.behaviors.disable('scrollZoom');
-  prevTouch && map.behaviors.disable('drag');
-
   const parent = map.container.getParentElement();
 
-  const position = getComputedStyle(parent).position;
-  if (!position || position === 'static') parent.style.position = 'relative';
+  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
 
   const zIndex = getComputedStyle(map.container.getElement()).zIndex;
 
@@ -68,32 +64,32 @@ export default function ymapsTouchScroll(map, options = {}) {
   }
 
   if (prevScroll) {
+    // todo перенести в blockToggle
     content.textContent = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
 
-    let blockShowFl = false;
-    let timeOut;
+    function scrollToggle(on = true) {
+      if (on) {
+        if (map.behaviors.isEnabled('scrollZoom')) return;
 
-    map.events.add('wheel', () => {
-      if (window.event.ctrlKey) {
+        map.behaviors.enable('scrollZoom');
+        blockToggle(false);
+      } else map.behaviors.disable('scrollZoom');
+    }
 
-      } else {
-        clearTimeout(timeOut);
-        
-        if (!blockShowFl) {
-          blockShowFl = true;
-          blockToggle();
-        }
-        
-        timeOut = setTimeout(() => {
-          blockShowFl = false;
-          blockToggle(false);
-        }, 500);
-      }
-    });
-  } else {
+    scrollToggle(false);
+    ['keydown', 'keyup'].forEach(event => document.addEventListener(event, e => scrollToggle(e.ctrlKey)));
+
+    map.events.add('wheel', () => !map.behaviors.isEnabled('scrollZoom') && blockToggle());
+    parent.addEventListener('mouseleave', () => blockToggle(false));
+  }
+
+  if (prevTouch) {
+    // todo перенести в blockToggle
     content.textContent = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
 
-    parent.addEventListener('touchmove', e => blockToggle(e.touches.length < 2));
+    map.behaviors.disable('drag');
+
+    parent.addEventListener('touchstart', e => blockToggle(e.touches.length < 2));
     parent.addEventListener('touchend', () => blockToggle(false));
   }
 }

@@ -99,13 +99,9 @@ function ymapsTouchScroll(map) {
 
   if (!prevScroll && !prevTouch) return;
 
-  prevScroll && map.behaviors.disable('scrollZoom');
-  prevTouch && map.behaviors.disable('drag');
-
   var parent = map.container.getParentElement();
 
-  var position = getComputedStyle(parent).position;
-  if (!position || position === 'static') parent.style.position = 'relative';
+  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
 
   var zIndex = getComputedStyle(map.container.getElement()).zIndex;
 
@@ -163,30 +159,42 @@ function ymapsTouchScroll(map) {
   }
 
   if (prevScroll) {
+    var scrollToggle = function scrollToggle() {
+      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (on) {
+        if (map.behaviors.isEnabled('scrollZoom')) return;
+
+        map.behaviors.enable('scrollZoom');
+        blockToggle(false);
+      } else map.behaviors.disable('scrollZoom');
+    };
+
+    // todo перенести в blockToggle
     content.textContent = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
 
-    var blockShowFl = false;
-    var timeOut = void 0;
+    scrollToggle(false);
+    ['keydown', 'keyup'].forEach(function (event) {
+      return document.addEventListener(event, function (e) {
+        return scrollToggle(e.ctrlKey);
+      });
+    });
 
     map.events.add('wheel', function () {
-      if (window.event.ctrlKey) {} else {
-        clearTimeout(timeOut);
-
-        if (!blockShowFl) {
-          blockShowFl = true;
-          blockToggle();
-        }
-
-        timeOut = setTimeout(function () {
-          blockShowFl = false;
-          blockToggle(false);
-        }, 500);
-      }
+      return !map.behaviors.isEnabled('scrollZoom') && blockToggle();
     });
-  } else {
+    parent.addEventListener('mouseleave', function () {
+      return blockToggle(false);
+    });
+  }
+
+  if (prevTouch) {
+    // todo перенести в blockToggle
     content.textContent = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
 
-    parent.addEventListener('touchmove', function (e) {
+    map.behaviors.disable('drag');
+
+    parent.addEventListener('touchstart', function (e) {
       return blockToggle(e.touches.length < 2);
     });
     parent.addEventListener('touchend', function () {
