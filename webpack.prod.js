@@ -30,8 +30,5 @@ module.exports = {
       comments: false
     }),
     new UnminifiedWebpackPlugin()
-  ],
-  externals: {
-    ismobilejs: 'isMobile'
-  }
+  ]
 };

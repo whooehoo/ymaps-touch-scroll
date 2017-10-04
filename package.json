@@ -34,6 +34,6 @@
     "webpack-shell-plugin": "^0.5.0"
   },
   "dependencies": {
-    "ismobilejs": "^0.4.1"
+    "dom4": "^1.8.5"
   }
 }

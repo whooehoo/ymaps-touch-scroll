@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("isMobile"));
+		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(["isMobile"], factory);
+		define([], factory);
 	else if(typeof exports === 'object')
-		exports["ymapsTouchScroll"] = factory(require("isMobile"));
+		exports["ymapsTouchScroll"] = factory();
 	else
-		root["ymapsTouchScroll"] = factory(root["isMobile"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+		root["ymapsTouchScroll"] = factory();
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -84,25 +84,24 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = ymapsTouchScroll;
-
-var _ismobilejs = __webpack_require__(1);
-
-var _ismobilejs2 = _interopRequireDefault(_ismobilejs);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function ymapsTouchScroll(map) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  if (!_ismobilejs2.default || !_ismobilejs2.default.any || !map.behaviors.isEnabled('multiTouch')) return;
+  var prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
+  var prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch && map.behaviors.isEnabled('multiTouch');
 
-  map.behaviors.disable('drag');
+  if (!prevScroll && !prevTouch) return;
 
-  var parentBlock = map.container.getParentElement();
+  var parent = map.container.getParentElement();
 
-  if (!getComputedStyle(parentBlock).position) parentBlock.style.position = 'relative';
+  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
 
-  function createEl(elClass, appendBlock, elStyles) {
+  var zIndex = getComputedStyle(map.container.getElement()).zIndex;
+
+  var margin = map.margin.getMargin();
+  for (var i in margin) {
+    margin[i] += 20;
+  }function createEl(elClass, appendBlock, elStyles) {
     var el = document.createElement('div');
 
     for (var key in elStyles) {
@@ -114,15 +113,13 @@ function ymapsTouchScroll(map) {
     return el;
   }
 
-  var mapZIndex = getComputedStyle(map.container.getElement()).zIndex;
-
-  var block = createEl('ymaps-touch-scroll', parentBlock, {
+  var block = createEl('ymaps-touch-scroll', parent, {
     position: 'absolute',
     top: '0',
     right: '0',
     bottom: '0',
     left: '0',
-    zIndex: mapZIndex - 1
+    zIndex: zIndex - 1
   });
 
   var bg = createEl('ymaps-touch-scroll-bg', block, {
@@ -133,10 +130,7 @@ function ymapsTouchScroll(map) {
     transition: 'opacity .1s ease-in-out'
   });
 
-  var mapMargin = map.margin.getMargin();
-  for (var i in mapMargin) {
-    mapMargin[i] += 20;
-  }var content = createEl('ymaps-touch-scroll-content', block, {
+  var content = createEl('ymaps-touch-scroll-content', block, {
     position: 'absolute',
     top: '50%',
     left: '0',
@@ -147,33 +141,70 @@ function ymapsTouchScroll(map) {
     overflow: 'hidden',
     boxSizing: 'border-box',
     textOverflow: 'ellipsis',
-    padding: mapMargin.join('px ') + 'px'
+    padding: margin.join('px ') + 'px'
   });
-
-  content.textContent = options.hasOwnProperty('text') ? options.text : 'Чтобы переместить карту проведите по ней двумя пальцами';
 
   function blockToggle() {
     var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-    block.style.zIndex = show ? mapZIndex : mapZIndex - 1;
+    block.style.zIndex = show ? zIndex : zIndex - 1;
     bg.style.opacity = show ? '.5' : 0;
   }
 
-  parentBlock.addEventListener('touchmove', function () {
-    return blockToggle();
-  });
-
-  parentBlock.addEventListener('touchend', function () {
+  block.addEventListener('click', function () {
     return blockToggle(false);
   });
+
+  if (prevScroll) {
+    var scrollToggle = function scrollToggle() {
+      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (on) {
+        if (map.behaviors.isEnabled('scrollZoom')) return;
+
+        map.behaviors.enable('scrollZoom');
+        blockToggle(false);
+      } else map.behaviors.disable('scrollZoom');
+    };
+
+    // todo перенести в blockToggle
+    content.textContent = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
+
+    scrollToggle(false);
+    ['keydown', 'keyup'].forEach(function (event) {
+      document.addEventListener(event, function (e) {
+        scrollToggle(e.ctrlKey);
+      });
+    });
+
+    map.events.add('wheel', function () {
+      return !map.behaviors.isEnabled('scrollZoom') && blockToggle();
+    });
+    parent.addEventListener('mouseleave', function () {
+      return blockToggle(false);
+    });
+  }
+
+  if (prevTouch) {
+
+    // map.behaviors.disable('drag');
+
+    // parent.addEventListener('touchstart', e => blockToggle(e.touches.length < 2));
+    // parent.addEventListener('touchend', () => blockToggle(false));
+
+    var touchToggle = function touchToggle() {
+      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (on) {
+        map.behaviors.enable('drag');
+      }
+    };
+
+    // todo перенести в blockToggle
+    content.textContent = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
+  }
 }
 module.exports = exports['default'];
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ })
 /******/ ]);

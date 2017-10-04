@@ -1,8 +1,8 @@
-import isMobile from 'ismobilejs';
+import 'dom4';
 
 export default function ymapsTouchScroll(map, options = {}) {
   const prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
-  const prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch && isMobile && isMobile.any && map.behaviors.isEnabled('multiTouch');
+  const prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch;
 
   if (!prevScroll && !prevTouch) return;
 
@@ -58,38 +58,62 @@ export default function ymapsTouchScroll(map, options = {}) {
     padding: margin.join('px ') + 'px'
   });
 
-  function blockToggle(show = true) {
+  const textScroll = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
+  const textTouch = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
+
+  function blockToggle(show = true, isScroll = true) {
+    if (show) content.textContent = isScroll ? textScroll : textTouch;
+
     block.style.zIndex = show ? zIndex : zIndex - 1;
     bg.style.opacity = show ? '.5' : 0;
   }
 
+  block.addEventListener('click', () => {
+    blockToggle(false);
+  });
+
   if (prevScroll) {
-    // todo перенести в blockToggle
-    content.textContent = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
-
     function scrollToggle(on = true) {
-      if (on) {
-        if (map.behaviors.isEnabled('scrollZoom')) return;
-
-        map.behaviors.enable('scrollZoom');
-        blockToggle(false);
-      } else map.behaviors.disable('scrollZoom');
+      on ? map.behaviors.enable('scrollZoom') : map.behaviors.disable('scrollZoom');
     }
 
     scrollToggle(false);
-    ['keydown', 'keyup'].forEach(event => document.addEventListener(event, e => scrollToggle(e.ctrlKey)));
 
-    map.events.add('wheel', () => !map.behaviors.isEnabled('scrollZoom') && blockToggle());
-    parent.addEventListener('mouseleave', () => blockToggle(false));
+    document.addEventListener('keydown', e => {
+      if (e.keyCode === 17 && !map.behaviors.isEnabled('scrollZoom')) {
+        scrollToggle();
+        blockToggle(false);
+      }
+    });
+
+    document.addEventListener('keyup', e => {
+      if (e.keyCode === 17) scrollToggle(false);
+    });
+
+    map.events.add('wheel', () => {
+      if (!map.behaviors.isEnabled('scrollZoom')) blockToggle();
+    });
+
+    parent.addEventListener('mouseleave', () => {
+      blockToggle(false);
+    });
   }
 
   if (prevTouch) {
-    // todo перенести в blockToggle
-    content.textContent = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
+    function touchToggle(on = true) {
+      on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
+    }
 
-    map.behaviors.disable('drag');
+    parent.addEventListener('touchstart', e => {
+      if (e.touches.length !== 2) {
+        touchToggle(false);
+        blockToggle(true, false);
+      }
+    });
 
-    parent.addEventListener('touchstart', e => blockToggle(e.touches.length < 2));
-    parent.addEventListener('touchend', () => blockToggle(false));
+    parent.addEventListener('touchend', () => {
+      touchToggle();
+      blockToggle(false, false);
+    });
   }
 }
