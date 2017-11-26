@@ -5,63 +5,49 @@ export default function ymapsTouchScroll(map, options = {}) {
   if (!prevScroll && !prevTouch) return;
 
   const mapEl = map.container.getElement();
-  mapEl.style.transition = 'opacity .2s';
-
   const parent = map.container.getParentElement();
 
   if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
 
-  const margin = map.margin.getMargin();
-  for (const i in margin) margin[i] += 20;
-
-  function createEl(elClass, appendBlock, elStyles) {
-    const el = document.createElement('div');
-
-    for (const key in elStyles) el.style[key] = elStyles[key];
-
-    el.className = elClass;
-
+  function createEl(appendBlock, attributes = {}, tag = 'div') {
+    const el = document.createElement(tag);
+    for (const attribute of Object.keys(attributes)) el[attribute] = attributes[attribute];
     appendBlock.appendChild(el);
-
     return el;
   }
 
-  const block = createEl('ymaps-touch-scroll', parent, {
-    position: 'absolute',
-    top: '0',
-    right: '0',
-    bottom: '0',
-    left: '0',
-    zIndex: '-1'
-  });
+  // todo убрать трансформ и проверить троеточие
+  const css = '.ymaps-touch-scroll{display:none;position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .2s}' +
+    '.ymaps-touch-scroll-bg{background:#000;height:100%;width:100%;opacity:.6}' +
+    '.ymaps-touch-scroll-content{position:absolute;top:50%;left:0;transform:translateY(-50%);color:#fff;text-align:center;width:100%;overflow:hidden;box-sizing:border-box;text-overflow:ellipsis}';
+  const style = createEl(document.head, {type: 'text/css'}, 'style');
+  style.appendChild(document.createTextNode(css));
 
-  const bg = createEl('ymaps-touch-scroll-bg', block, {
-    background: '#000',
-    width: '100%',
-    height: '100%'
-  });
+  const block = createEl(parent, {className: 'ymaps-touch-scroll'});
+  const bg = createEl(block, {className: 'ymaps-touch-scroll-bg'});
+  const content = createEl(block, {className: 'ymaps-touch-scroll-content'});
 
-  const content = createEl('ymaps-touch-scroll-content', block, {
-    position: 'absolute',
-    top: '50%',
-    left: '0',
-    transform: 'translateY(-50%)',
-    color: '#fff',
-    textAlign: 'center',
-    width: '100%',
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    textOverflow: 'ellipsis',
-    padding: margin.join('px ') + 'px'
-  });
+  // todo сделать паддинг для контента
+  // const margin = map.margin.getMargin();
+  // for (const i in margin) margin[i] += 20;
+  // padding: margin.join('px ') + 'px'
 
-  const textScroll = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
-  const textTouch = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
+  const textScroll = (options.hasOwnProperty('textScroll') && options.textScroll) ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
+  const textTouch = (options.hasOwnProperty('textTouch') && options.textTouch) ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
 
   function blockToggle(show = true, isScroll = true) {
     if (show) content.textContent = isScroll ? textScroll : textTouch;
     show ? map.behaviors.disable('drag') : map.behaviors.enable('drag');
-    mapEl.style.opacity = show ? '.3' : '1';
+
+    if (show) block.style.display = 'block';
+    else setTimeout(() => { block.style.display = 'none' }, 200);
+    // else block.style.display = 'none';
+
+    if (show) {
+      setTimeout(() => { block.style.opacity = '1' }, 49);
+      // block.style.opacity = '.6'
+    }
+    else block.style.opacity = '0';
   }
 
   map.events.add('click', () => {
@@ -91,12 +77,14 @@ export default function ymapsTouchScroll(map, options = {}) {
       blockToggle(!isCtrlPress);
     });
 
-    map.events.add('mouseleave', () => {
-      blockToggle(false);
-    });
+    // map.events.add('mouseleave', e => {
+    //   console.log(e);
+    //   blockToggle(false);
+    // });
   }
 
-  if (prevTouch) {
+  // if (prevTouch) {
+  if (false) {
     function touchToggle(on = true) {
       on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
     }
