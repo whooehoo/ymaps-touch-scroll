@@ -1,7 +1,7 @@
 {
   "name": "ymaps-touch-scroll",
-  "version": "1.1.0",
-  "description": "Library add touch description block in ymaps on devices",
+  "version": "2.0.0",
+  "description": "Library add touch or/and scroll description block in ymaps",
   "main": "./dist/ymaps-touch-scroll.js",
   "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
@@ -32,8 +32,5 @@
     "unminified-webpack-plugin": "^1.2.0",
     "webpack": "^3.1.0",
     "webpack-shell-plugin": "^0.5.0"
-  },
-  "dependencies": {
-    "dom4": "^1.8.5"
   }
 }

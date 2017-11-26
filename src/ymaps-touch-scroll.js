@@ -1,16 +1,15 @@
-import 'dom4';
-
 export default function ymapsTouchScroll(map, options = {}) {
   const prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
   const prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch;
 
   if (!prevScroll && !prevTouch) return;
 
+  const mapEl = map.container.getElement();
+  mapEl.style.transition = 'opacity .2s';
+
   const parent = map.container.getParentElement();
 
   if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-
-  const zIndex = getComputedStyle(map.container.getElement()).zIndex;
 
   const margin = map.margin.getMargin();
   for (const i in margin) margin[i] += 20;
@@ -20,7 +19,7 @@ export default function ymapsTouchScroll(map, options = {}) {
 
     for (const key in elStyles) el.style[key] = elStyles[key];
 
-    el.classList.add(elClass);
+    el.className = elClass;
 
     appendBlock.appendChild(el);
 
@@ -33,15 +32,13 @@ export default function ymapsTouchScroll(map, options = {}) {
     right: '0',
     bottom: '0',
     left: '0',
-    zIndex: zIndex - 1
+    zIndex: '-1'
   });
 
   const bg = createEl('ymaps-touch-scroll-bg', block, {
     background: '#000',
-    opacity: '0',
     width: '100%',
-    height: '100%',
-    transition: 'opacity .1s ease-in-out'
+    height: '100%'
   });
 
   const content = createEl('ymaps-touch-scroll-content', block, {
@@ -63,38 +60,38 @@ export default function ymapsTouchScroll(map, options = {}) {
 
   function blockToggle(show = true, isScroll = true) {
     if (show) content.textContent = isScroll ? textScroll : textTouch;
-
-    block.style.zIndex = show ? zIndex : zIndex - 1;
-    bg.style.opacity = show ? '.5' : 0;
+    show ? map.behaviors.disable('drag') : map.behaviors.enable('drag');
+    mapEl.style.opacity = show ? '.3' : '1';
   }
 
-  block.addEventListener('click', () => {
+  map.events.add('click', () => {
     blockToggle(false);
   });
 
   if (prevScroll) {
+    let isCtrlPress = false;
+
+    document.addEventListener('keydown', e => {
+      isCtrlPress = e.keyCode === 17;
+      if (isCtrlPress) blockToggle(false);
+    });
+
+    document.addEventListener('keyup', e => {
+      if (e.keyCode === 17) isCtrlPress = false;
+    });
+
     function scrollToggle(on = true) {
       on ? map.behaviors.enable('scrollZoom') : map.behaviors.disable('scrollZoom');
     }
 
     scrollToggle(false);
 
-    document.addEventListener('keydown', e => {
-      if (e.keyCode === 17 && !map.behaviors.isEnabled('scrollZoom')) {
-        scrollToggle();
-        blockToggle(false);
-      }
-    });
-
-    document.addEventListener('keyup', e => {
-      if (e.keyCode === 17) scrollToggle(false);
-    });
-
     map.events.add('wheel', () => {
-      if (!map.behaviors.isEnabled('scrollZoom')) blockToggle();
+      scrollToggle(isCtrlPress);
+      blockToggle(!isCtrlPress);
     });
 
-    parent.addEventListener('mouseleave', () => {
+    map.events.add('mouseleave', () => {
       blockToggle(false);
     });
   }
@@ -104,16 +101,48 @@ export default function ymapsTouchScroll(map, options = {}) {
       on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
     }
 
-    parent.addEventListener('touchstart', e => {
-      if (e.touches.length !== 2) {
+    ymaps.domEvent.manager.add(mapEl, 'touchstart', e => {
+      if (e.get('touches').length !== 2) {
         touchToggle(false);
-        blockToggle(true, false);
+      } else {
+        touchToggle();
       }
     });
 
-    parent.addEventListener('touchend', () => {
-      touchToggle();
-      blockToggle(false, false);
-    });
+    // ymaps.domEvent.manager.add(mapEl, 'touchmove', e => {
+    //   if (e.get('touches').length !== 2) {
+    //     blockToggle(true, false);
+    //   }
+    // });
+
+    // ymaps.domEvent.manager.add(mapEl, 'touchend', e => {
+    //   if (e.get('touches').length !== 2) touchToggle(false);
+    // });
+
+
+
+    // map.controls.events.add('mousedown', function (e) {
+    //   console.log('1');
+    //   e.stopPropagation();
+    //   e.preventDefault();
+    // });
+
+
+    // map.events.add('mousedown', e => {
+    //   console.log(e);
+    // });
+    //
+    // parent.addEventListener('touchstart', e => {
+    //   console.log('2');
+    //   if (e.touches.length !== 2) {
+    //     touchToggle(false);
+    //     blockToggle(true, false);
+    //   }
+    // });
+    //
+    // parent.addEventListener('touchend', () => {
+    //   touchToggle();
+    //   blockToggle(false, false);
+    // });
   }
 }
