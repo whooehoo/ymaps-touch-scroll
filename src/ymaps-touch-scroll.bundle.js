@@ -92,11 +92,6 @@ function ymapsTouchScroll(map) {
 
   if (!prevScroll && !prevTouch) return;
 
-  var mapEl = map.container.getElement();
-  var parent = map.container.getParentElement();
-
-  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-
   function createEl(appendBlock) {
     var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var tag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'div';
@@ -130,8 +125,12 @@ function ymapsTouchScroll(map) {
     return el;
   }
 
-  // todo убрать трансформ и проверить троеточие
-  var css = '.ymaps-touch-scroll{display:none;position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .2s}' + '.ymaps-touch-scroll-bg{background:#000;height:100%;width:100%;opacity:.6}' + '.ymaps-touch-scroll-content{position:absolute;top:50%;left:0;transform:translateY(-50%);color:#fff;text-align:center;width:100%;overflow:hidden;box-sizing:border-box;text-overflow:ellipsis}';
+  var mapEl = map.container.getElement();
+  var parent = map.container.getParentElement();
+
+  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+
+  var css = '.ymaps-touch-scroll{position:absolute;top:0;left:0;display:table;opacity:0;transition:opacity .2s;width:0;height:0;overflow:hidden}' + '.ymaps-touch-scroll-bg{position:absolute;top:0;left:0;background:#000;height:100%;width:100%;opacity:.6}' + '.ymaps-touch-scroll-content{position:relative;display:table-cell;vertical-align:middle;color:#fff;text-align:center}';
   var style = createEl(document.head, { type: 'text/css' }, 'style');
   style.appendChild(document.createTextNode(css));
 
@@ -139,10 +138,10 @@ function ymapsTouchScroll(map) {
   var bg = createEl(block, { className: 'ymaps-touch-scroll-bg' });
   var content = createEl(block, { className: 'ymaps-touch-scroll-content' });
 
-  // todo сделать паддинг для контента
-  // const margin = map.margin.getMargin();
-  // for (const i in margin) margin[i] += 20;
-  // padding: margin.join('px ') + 'px'
+  var margin = map.margin.getMargin();
+  for (var i in margin) {
+    margin[i] += 20;
+  }content.style.padding = margin.join('px ') + 'px';
 
   var textScroll = options.hasOwnProperty('textScroll') && options.textScroll ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
   var textTouch = options.hasOwnProperty('textTouch') && options.textTouch ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
@@ -154,20 +153,15 @@ function ymapsTouchScroll(map) {
     if (show) content.textContent = isScroll ? textScroll : textTouch;
     show ? map.behaviors.disable('drag') : map.behaviors.enable('drag');
 
-    if (show) block.style.display = 'block';else setTimeout(function () {
-      block.style.display = 'none';
-    }, 200);
-    // else block.style.display = 'none';
-
-    if (show) {
-      setTimeout(function () {
-        block.style.opacity = '1';
-      }, 49);
-      // block.style.opacity = '.6'
-    } else block.style.opacity = '0';
+    block.style.opacity = show ? '1' : '0';
+    setTimeout(function () {
+      var val = show ? '100%' : '0';
+      block.style.width = val;
+      block.style.height = val;
+    }, show ? 0 : 200);
   }
 
-  map.events.add('click', function () {
+  block.addEventListener('click', function () {
     blockToggle(false);
   });
 
@@ -196,10 +190,9 @@ function ymapsTouchScroll(map) {
       blockToggle(!isCtrlPress);
     });
 
-    // map.events.add('mouseleave', e => {
-    //   console.log(e);
-    //   blockToggle(false);
-    // });
+    block.addEventListener('mouseleave', function () {
+      blockToggle(false);
+    });
   }
 
   // if (prevTouch) {
