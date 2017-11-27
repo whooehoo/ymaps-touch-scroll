@@ -84,13 +84,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = ymapsTouchScroll;
-function ymapsTouchScroll(map) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function ymapsTouchScroll(map, _ref) {
+  var _ref$preventScroll = _ref.preventScroll,
+      preventScroll = _ref$preventScroll === undefined ? true : _ref$preventScroll,
+      _ref$preventTouch = _ref.preventTouch,
+      preventTouch = _ref$preventTouch === undefined ? true : _ref$preventTouch,
+      _ref$textScroll = _ref.textScroll,
+      textScroll = _ref$textScroll === undefined ? 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl' : _ref$textScroll,
+      _ref$textTouch = _ref.textTouch,
+      textTouch = _ref$textTouch === undefined ? 'Чтобы переместить карту проведите по ней двумя пальцами' : _ref$textTouch;
 
-  var prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
-  var prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch;
-
-  if (!prevScroll && !prevTouch) return;
+  if (!preventScroll && !preventTouch) return;
 
   function createEl(appendBlock) {
     var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -143,9 +147,6 @@ function ymapsTouchScroll(map) {
     margin[i] += 20;
   }content.style.padding = margin.join('px ') + 'px';
 
-  var textScroll = options.hasOwnProperty('textScroll') && options.textScroll ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
-  var textTouch = options.hasOwnProperty('textTouch') && options.textTouch ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
-
   function blockToggle() {
     var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     var isScroll = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -165,7 +166,7 @@ function ymapsTouchScroll(map) {
     blockToggle(false);
   });
 
-  if (prevScroll) {
+  if (preventScroll) {
     var scrollToggle = function scrollToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -195,21 +196,22 @@ function ymapsTouchScroll(map) {
     });
   }
 
-  // if (prevTouch) {
-  if (false) {
+  if (preventTouch) {
     var touchToggle = function touchToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
       on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
     };
 
-    ymaps.domEvent.manager.add(mapEl, 'touchstart', function (e) {
-      if (e.get('touches').length !== 2) {
-        touchToggle(false);
-      } else {
-        touchToggle();
-      }
-    });
+    touchToggle(false);
+
+    // ymaps.domEvent.manager.add(mapEl, 'touchstart', e => {
+    //   if (e.get('touches').length !== 2) {
+    //     touchToggle(false);
+    //   } else {
+    //     touchToggle();
+    //   }
+    // });
 
     // ymaps.domEvent.manager.add(mapEl, 'touchmove', e => {
     //   if (e.get('touches').length !== 2) {
@@ -220,7 +222,6 @@ function ymapsTouchScroll(map) {
     // ymaps.domEvent.manager.add(mapEl, 'touchend', e => {
     //   if (e.get('touches').length !== 2) touchToggle(false);
     // });
-
 
     // map.controls.events.add('mousedown', function (e) {
     //   console.log('1');

@@ -1,8 +1,10 @@
-export default function ymapsTouchScroll(map, options = {}) {
-  const prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
-  const prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch;
-
-  if (!prevScroll && !prevTouch) return;
+export default function ymapsTouchScroll(map, {
+  preventScroll = true,
+  preventTouch = true,
+  textScroll = 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl',
+  textTouch = 'Чтобы переместить карту проведите по ней двумя пальцами'
+}) {
+  if (!preventScroll && !preventTouch) return;
 
   function createEl(appendBlock, attributes = {}, tag = 'div') {
     const el = document.createElement(tag);
@@ -30,9 +32,6 @@ export default function ymapsTouchScroll(map, options = {}) {
   for (const i in margin) margin[i] += 20;
   content.style.padding = margin.join('px ') + 'px';
 
-  const textScroll = (options.hasOwnProperty('textScroll') && options.textScroll) ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
-  const textTouch = (options.hasOwnProperty('textTouch') && options.textTouch) ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
-
   function blockToggle(show = true, isScroll = true) {
     if (show) content.textContent = isScroll ? textScroll : textTouch;
     show ? map.behaviors.disable('drag') : map.behaviors.enable('drag');
@@ -49,7 +48,7 @@ export default function ymapsTouchScroll(map, options = {}) {
     blockToggle(false);
   });
 
-  if (prevScroll) {
+  if (preventScroll) {
     let isCtrlPress = false;
 
     document.addEventListener('keydown', e => {
@@ -77,19 +76,20 @@ export default function ymapsTouchScroll(map, options = {}) {
     });
   }
 
-  // if (prevTouch) {
-  if (false) {
+  if (preventTouch) {
     function touchToggle(on = true) {
       on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
     }
 
-    ymaps.domEvent.manager.add(mapEl, 'touchstart', e => {
-      if (e.get('touches').length !== 2) {
-        touchToggle(false);
-      } else {
-        touchToggle();
-      }
-    });
+    touchToggle(false);
+
+    // ymaps.domEvent.manager.add(mapEl, 'touchstart', e => {
+    //   if (e.get('touches').length !== 2) {
+    //     touchToggle(false);
+    //   } else {
+    //     touchToggle();
+    //   }
+    // });
 
     // ymaps.domEvent.manager.add(mapEl, 'touchmove', e => {
     //   if (e.get('touches').length !== 2) {
@@ -100,8 +100,6 @@ export default function ymapsTouchScroll(map, options = {}) {
     // ymaps.domEvent.manager.add(mapEl, 'touchend', e => {
     //   if (e.get('touches').length !== 2) touchToggle(false);
     // });
-
-
 
     // map.controls.events.add('mousedown', function (e) {
     //   console.log('1');
