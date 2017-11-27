@@ -3,7 +3,7 @@ export default function ymapsTouchScroll(map, {
   preventTouch = true,
   textScroll = 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl',
   textTouch = 'Чтобы переместить карту проведите по ней двумя пальцами'
-}) {
+} = {}) {
   if (!preventScroll && !preventTouch) return;
 
   function createEl(appendBlock, attributes = {}, tag = 'div') {
