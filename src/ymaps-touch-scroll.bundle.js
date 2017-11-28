@@ -95,6 +95,7 @@ function ymapsTouchScroll(map) {
       _ref$textTouch = _ref.textTouch,
       textTouch = _ref$textTouch === undefined ? 'Чтобы переместить карту проведите по ней двумя пальцами' : _ref$textTouch;
 
+  // todo проверить правильно ли написан дефолтный объект
   if (!preventScroll && !preventTouch) return;
 
   function createEl(appendBlock) {
@@ -130,12 +131,13 @@ function ymapsTouchScroll(map) {
     return el;
   }
 
-  var mapEl = map.container.getElement();
   var parent = map.container.getParentElement();
+  var isMobile = /Mobi/i.test(navigator.userAgent) || /Anroid/i.test(navigator.userAgent);
+  var isBlockShow = false;
 
   if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
 
-  var css = '.ymaps-touch-scroll{position:absolute;top:0;left:0;display:table;opacity:0;transition:opacity .2s;width:0;height:0;overflow:hidden}' + '.ymaps-touch-scroll-bg{position:absolute;top:0;left:0;background:#000;height:100%;width:100%;opacity:.6}' + '.ymaps-touch-scroll-content{position:relative;display:table-cell;vertical-align:middle;color:#fff;text-align:center}';
+  var css = '.ymaps-touch-scroll{position:absolute;top:0;left:0;opacity:0;transition:opacity .2s;width:0;height:0;overflow:hidden}' + '.ymaps-touch-scroll:after{content:"";display:inline-block;vertical-align:middle;height:100%}' + '.ymaps-touch-scroll-bg{position:absolute;top:0;left:0;background:#000;height:100%;width:100%;opacity:.6}' + '.ymaps-touch-scroll-content{position:relative;display:inline-block;vertical-align:middle;color:#fff;text-align:center}';
   var style = createEl(document.head, { type: 'text/css' }, 'style');
   style.appendChild(document.createTextNode(css));
 
@@ -147,13 +149,13 @@ function ymapsTouchScroll(map) {
   for (var i in margin) {
     margin[i] += 20;
   }content.style.padding = margin.join('px ') + 'px';
+  content.textContent = isMobile ? textTouch : textScroll;
 
   function blockToggle() {
     var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var isScroll = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-    if (show) content.textContent = isScroll ? textScroll : textTouch;
-    show ? map.behaviors.disable('drag') : map.behaviors.enable('drag');
+    if (show && isBlockShow || !show && !isBlockShow) return;
+    isBlockShow = show;
 
     block.style.opacity = show ? '1' : '0';
     setTimeout(function () {
@@ -167,14 +169,17 @@ function ymapsTouchScroll(map) {
     blockToggle(false);
   });
 
-  if (preventScroll) {
+  if (preventScroll && !isMobile) {
     var scrollToggle = function scrollToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
+      if (on && isScrollOn || !on && !isScrollOn) return;
+      isScrollOn = on;
       on ? map.behaviors.enable('scrollZoom') : map.behaviors.disable('scrollZoom');
     };
 
     var isCtrlPress = false;
+    var isScrollOn = true;
 
     document.addEventListener('keydown', function (e) {
       isCtrlPress = e.keyCode === 17;
@@ -197,7 +202,7 @@ function ymapsTouchScroll(map) {
     });
   }
 
-  if (preventTouch) {
+  if (preventTouch && isMobile) {
     var touchToggle = function touchToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -206,47 +211,9 @@ function ymapsTouchScroll(map) {
 
     touchToggle(false);
 
-    // ymaps.domEvent.manager.add(mapEl, 'touchstart', e => {
-    //   if (e.get('touches').length !== 2) {
-    //     touchToggle(false);
-    //   } else {
-    //     touchToggle();
-    //   }
-    // });
-
-    // ymaps.domEvent.manager.add(mapEl, 'touchmove', e => {
-    //   if (e.get('touches').length !== 2) {
-    //     blockToggle(true, false);
-    //   }
-    // });
-
-    // ymaps.domEvent.manager.add(mapEl, 'touchend', e => {
-    //   if (e.get('touches').length !== 2) touchToggle(false);
-    // });
-
-    // map.controls.events.add('mousedown', function (e) {
-    //   console.log('1');
-    //   e.stopPropagation();
-    //   e.preventDefault();
-    // });
-
-
-    // map.events.add('mousedown', e => {
-    //   console.log(e);
-    // });
-    //
-    // parent.addEventListener('touchstart', e => {
-    //   console.log('2');
-    //   if (e.touches.length !== 2) {
-    //     touchToggle(false);
-    //     blockToggle(true, false);
-    //   }
-    // });
-    //
-    // parent.addEventListener('touchend', () => {
-    //   touchToggle();
-    //   blockToggle(false, false);
-    // });
+    parent.addEventListener('touchmove', function (e) {
+      if (e.touches.length !== 2) blockToggle();else blockToggle(false);
+    });
   }
 }
 module.exports = exports['default'];

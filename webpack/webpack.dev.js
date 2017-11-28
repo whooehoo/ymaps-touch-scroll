@@ -8,7 +8,7 @@ module.exports = {
   entry: "./src/ymaps-touch-scroll.js",
   output: {
     filename: "ymaps-touch-scroll.bundle.js",
-    path: path.resolve(__dirname, "src"),
+    path: path.resolve(__dirname, "../src"),
     library: "ymapsTouchScroll",
     libraryTarget: "umd"
   },
