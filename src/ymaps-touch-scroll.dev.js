@@ -165,6 +165,12 @@ function ymapsTouchScroll(map) {
     mapEl.style.opacity = show ? '.3' : '1';
   }
 
+  function dragToggle() {
+    var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+    on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
+  }
+
   if (preventScroll && !isMobile) {
     var scrollToggle = function scrollToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -190,27 +196,28 @@ function ymapsTouchScroll(map) {
 
     map.events.add('wheel', function () {
       scrollToggle(isCtrlPress);
+      dragToggle(isCtrlPress);
       blockToggle(!isCtrlPress);
     });
 
     map.events.add('mouseleave', function () {
       blockToggle(false);
+      dragToggle(true);
+    });
+
+    map.events.add('mousedown', function () {
+      blockToggle(false);
+      dragToggle(true);
     });
   }
 
   if (preventTouch && isMobile) {
-    var touchToggle = function touchToggle() {
-      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-      on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
-    };
-
-    touchToggle(false);
+    dragToggle(false);
 
     ymaps.domEvent.manager.add(mapEl, 'touchmove', function (e) {
       var twoFingers = e.get('touches').length === 2;
       blockToggle(!twoFingers);
-      touchToggle(twoFingers);
+      dragToggle(twoFingers);
     });
 
     ymaps.domEvent.manager.add(mapEl, 'touchend', function () {

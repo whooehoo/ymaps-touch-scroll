@@ -83,125 +83,146 @@ return /******/ (function(modules) { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 exports.default = ymapsTouchScroll;
 function ymapsTouchScroll(map) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$preventScroll = _ref.preventScroll,
+      preventScroll = _ref$preventScroll === undefined ? true : _ref$preventScroll,
+      _ref$preventTouch = _ref.preventTouch,
+      preventTouch = _ref$preventTouch === undefined ? true : _ref$preventTouch,
+      _ref$textScroll = _ref.textScroll,
+      textScroll = _ref$textScroll === undefined ? 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl' : _ref$textScroll,
+      _ref$textTouch = _ref.textTouch,
+      textTouch = _ref$textTouch === undefined ? 'Чтобы переместить карту проведите по ней двумя пальцами' : _ref$textTouch;
 
-  var prevScroll = options.hasOwnProperty('preventScroll') && options.preventScroll;
-  var prevTouch = options.hasOwnProperty('preventTouch') && options.preventTouch && map.behaviors.isEnabled('multiTouch');
+  if ((typeof map === 'undefined' ? 'undefined' : _typeof(map)) !== 'object' || !preventScroll && !preventTouch || typeof textScroll !== 'string' || typeof textTouch !== 'string') return;
 
-  if (!prevScroll && !prevTouch) return;
+  function createEl(appendBlock) {
+    var attributes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var tag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'div';
 
-  var parent = map.container.getParentElement();
+    var el = document.createElement(tag);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-
-  var zIndex = getComputedStyle(map.container.getElement()).zIndex;
-
-  var margin = map.margin.getMargin();
-  for (var i in margin) {
-    margin[i] += 20;
-  }function createEl(elClass, appendBlock, elStyles) {
-    var el = document.createElement('div');
-
-    for (var key in elStyles) {
-      el.style[key] = elStyles[key];
-    }el.classList.add(elClass);
+    try {
+      for (var _iterator = Object.keys(attributes)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var attribute = _step.value;
+        el[attribute] = attributes[attribute];
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
 
     appendBlock.appendChild(el);
-
     return el;
   }
 
-  var block = createEl('ymaps-touch-scroll', parent, {
-    position: 'absolute',
-    top: '0',
-    right: '0',
-    bottom: '0',
-    left: '0',
-    zIndex: zIndex - 1
-  });
+  var parentEl = map.container.getParentElement();
+  var mapEl = map.container.getElement();
+  var isMobile = /Mobi/i.test(navigator.userAgent) || /Anroid/i.test(navigator.userAgent);
+  var isBlockShow = false;
 
-  var bg = createEl('ymaps-touch-scroll-bg', block, {
-    background: '#000',
-    opacity: '0',
-    width: '100%',
-    height: '100%',
-    transition: 'opacity .1s ease-in-out'
-  });
+  if (getComputedStyle(parentEl).position === 'static') parentEl.style.position = 'relative';
 
-  var content = createEl('ymaps-touch-scroll-content', block, {
-    position: 'absolute',
-    top: '50%',
-    left: '0',
-    transform: 'translateY(-50%)',
-    color: '#fff',
-    textAlign: 'center',
-    width: '100%',
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    textOverflow: 'ellipsis',
-    padding: margin.join('px ') + 'px'
-  });
+  var css = '.ymaps-touch-scroll{position:absolute;top:0;left:0;transition:opacity .2s;width:100%;height:100%;overflow:hidden;z-index:-2147483648}' + '.ymaps-touch-scroll:before{content:"";display:inline-block;vertical-align:middle;height:100%}' + '.ymaps-touch-scroll-bg{position:absolute;top:0;left:0;background:#000;height:100%;width:100%}' + '.ymaps-touch-scroll-content{position:relative;display:inline-block;vertical-align:middle;width:100%;color:#fff;text-align:center;box-sizing:border-box}';
+  var style = createEl(document.head, { type: 'text/css' }, 'style');
+  style.appendChild(document.createTextNode(css));
+
+  var block = createEl(parentEl, { className: 'ymaps-touch-scroll' });
+  var bg = createEl(block, { className: 'ymaps-touch-scroll-bg' });
+  var content = createEl(block, { className: 'ymaps-touch-scroll-content' });
+
+  mapEl.style.transition = 'opacity .2s';
+  var margin = map.margin.getMargin();
+  for (var i in margin) {
+    margin[i] += 20;
+  }content.style.padding = margin.join('px ') + 'px';
+  content.textContent = isMobile ? textTouch : textScroll;
 
   function blockToggle() {
     var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-    block.style.zIndex = show ? zIndex : zIndex - 1;
-    bg.style.opacity = show ? '.5' : 0;
+    if (show && isBlockShow || !show && !isBlockShow) return;
+    isBlockShow = show;
+
+    block.style.opacity = show ? '1' : '0';
+    mapEl.style.opacity = show ? '.3' : '1';
   }
 
-  block.addEventListener('click', function () {
-    return blockToggle(false);
-  });
+  function dragToggle() {
+    var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-  if (prevScroll) {
+    on ? map.behaviors.enable('drag') : map.behaviors.disable('drag');
+  }
+
+  if (preventScroll && !isMobile) {
     var scrollToggle = function scrollToggle() {
       var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-      if (on) {
-        if (map.behaviors.isEnabled('scrollZoom')) return;
-
-        map.behaviors.enable('scrollZoom');
-        blockToggle(false);
-      } else map.behaviors.disable('scrollZoom');
+      if (on && isScrollOn || !on && !isScrollOn) return;
+      isScrollOn = on;
+      on ? map.behaviors.enable('scrollZoom') : map.behaviors.disable('scrollZoom');
     };
 
-    // todo перенести в blockToggle
-    content.textContent = options.hasOwnProperty('textScroll') ? options.textScroll : 'Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl';
+    var isCtrlPress = false;
+    var isScrollOn = true;
+
+    document.addEventListener('keydown', function (e) {
+      isCtrlPress = e.keyCode === 17;
+      if (isCtrlPress) blockToggle(false);
+    });
+
+    document.addEventListener('keyup', function (e) {
+      if (e.keyCode === 17) isCtrlPress = false;
+    });
 
     scrollToggle(false);
-    ['keydown', 'keyup'].forEach(function (event) {
-      document.addEventListener(event, function (e) {
-        scrollToggle(e.ctrlKey);
-      });
-    });
 
     map.events.add('wheel', function () {
-      return !map.behaviors.isEnabled('scrollZoom') && blockToggle();
+      scrollToggle(isCtrlPress);
+      dragToggle(isCtrlPress);
+      blockToggle(!isCtrlPress);
     });
-    parent.addEventListener('mouseleave', function () {
-      return blockToggle(false);
+
+    map.events.add('mouseleave', function () {
+      blockToggle(false);
+      dragToggle(true);
+    });
+
+    map.events.add('mousedown', function () {
+      blockToggle(false);
+      dragToggle(true);
     });
   }
 
-  if (prevTouch) {
+  if (preventTouch && isMobile) {
+    dragToggle(false);
 
-    // map.behaviors.disable('drag');
+    ymaps.domEvent.manager.add(mapEl, 'touchmove', function (e) {
+      var twoFingers = e.get('touches').length === 2;
+      blockToggle(!twoFingers);
+      dragToggle(twoFingers);
+    });
 
-    // parent.addEventListener('touchstart', e => blockToggle(e.touches.length < 2));
-    // parent.addEventListener('touchend', () => blockToggle(false));
-
-    var touchToggle = function touchToggle() {
-      var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-      if (on) {
-        map.behaviors.enable('drag');
-      }
-    };
-
-    // todo перенести в blockToggle
-    content.textContent = options.hasOwnProperty('textTouch') ? options.textTouch : 'Чтобы переместить карту проведите по ней двумя пальцами';
+    ymaps.domEvent.manager.add(mapEl, 'touchend', function () {
+      blockToggle(false);
+    });
   }
 }
 module.exports = exports['default'];

@@ -6,7 +6,7 @@
   "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
     "dev": "webpack --env=dev",
-    "prod": "webpack --env=prod && webpack --env=prod-bundle"
+    "prod": "webpack --env=prod"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,10 @@
     "ymaps",
     "behavior",
     "muliTouch",
-    "device"
+    "touch",
+    "scroll",
+    "desktop",
+    "mobile"
   ],
   "author": "whooehoo",
   "license": "MIT",
