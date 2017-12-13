@@ -1,7 +1,7 @@
 # ymaps-touch-scroll
-Library add touch description block in ymaps on devices
+Library add touch or/and scroll description block in ymaps
 
-![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/docs/gif.gif)
+![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/gif.gif)
 
 ## [DEMO](https://whooehoo.github.io/ymaps-touch-scroll/)
 
@@ -10,9 +10,9 @@ Library add touch description block in ymaps on devices
 ### npm or yarn
 
 ```sh
-npm i ymaps-touch-scroll --save
+npm i ymaps-touch-scroll
 
-yarn add ymaps-touch-scroll --save
+yarn add ymaps-touch-scroll
 ```
 
 ```js
@@ -31,7 +31,7 @@ git clone git@github.com:whooehoo/ymaps-touch-scroll.git
 
 ```html
 <!-- HTML -->
-<script src="path/to/folder/ymaps-touch-scroll/dist/ymaps-touch-scroll.bundle.min.js"></script>
+<script src="path/to/folder/ymaps-touch-scroll/dist/ymaps-touch-scroll.min.js"></script>
 ```
 
 ## Example:
@@ -53,4 +53,7 @@ ymaps.ready(mapInit);
 
 Option | Default | Description
 ---------|-----------------------|---------
-`text` | `Чтобы переместить карту проведите по ней двумя пальцами` | Touch block's text
+`preventScroll` | `true` | Prevent scroll on desktop
+`preventTouch` | `true` | Prevent touch on mobile
+`textScroll` | `Чтобы изменить масштаб, прокручивайте карту, удерживая клавишу Ctrl` | Touch block's text
+`textTouch` | `Чтобы переместить карту проведите по ней двумя пальцами` | Touch block's text
