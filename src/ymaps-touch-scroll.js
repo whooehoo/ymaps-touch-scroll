@@ -15,7 +15,7 @@ export default function ymapsTouchScroll(map, {
 
   const parentEl = map.container.getParentElement();
   const mapEl = map.container.getElement();
-  const isMobile = /Mobi/i.test(navigator.userAgent) || /Anroid/i.test(navigator.userAgent);
+  const isMobile = /Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent);
   let isBlockShow = false;
 
   if (getComputedStyle(parentEl).position === 'static') parentEl.style.position = 'relative';

@@ -135,7 +135,7 @@ function ymapsTouchScroll(map) {
 
   var parentEl = map.container.getParentElement();
   var mapEl = map.container.getElement();
-  var isMobile = /Mobi/i.test(navigator.userAgent) || /Anroid/i.test(navigator.userAgent);
+  var isMobile = /Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent);
   var isBlockShow = false;
 
   if (getComputedStyle(parentEl).position === 'static') parentEl.style.position = 'relative';
