@@ -1,9 +1,8 @@
 {
   "name": "ymaps-touch-scroll",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Library add touch or/and scroll description block in ymaps",
   "main": "./dist/ymaps-touch-scroll.js",
-  "module": "./src/ymaps-touch-scroll.js",
   "scripts": {
     "dev": "webpack --env=dev",
     "prod": "webpack --env=prod"
