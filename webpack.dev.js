@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  mode: "development",
   watch: true,
   watchOptions: {
     ignored: /node_modules/
@@ -10,6 +11,7 @@ module.exports = {
     filename: "ymaps-touch-scroll.dev.js",
     path: path.resolve(__dirname, "src"),
     library: "ymapsTouchScroll",
+    libraryExport: "default",
     libraryTarget: "umd"
   },
   module: {
@@ -17,13 +19,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["env"],
-            plugins: ["add-module-exports"]
-          }
-        }
+        use: "babel-loader"
       }
     ]
   }

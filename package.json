@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/whooehoo/ymaps-touch-scroll#readme",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.6.1",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
     "unminified-webpack-plugin": "^1.4.2",
-    "webpack": "^3.10.0",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6",
     "webpack-shell-plugin": "^0.5.0"
   }
 }
