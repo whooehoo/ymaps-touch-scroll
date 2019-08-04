@@ -30,7 +30,7 @@ const ymapsTouchScroll = (
     color: "#fff",
     display: "flex",
     justifyContent: "center",
-    padding: "20px",
+    padding: "40px",
     textAlign: "center",
     transition: "background .2s",
     touchAction: "auto"
