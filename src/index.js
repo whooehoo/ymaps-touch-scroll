@@ -75,6 +75,10 @@ const ymapsTouchScroll = (
       hintToggle(!isCtrlPress);
     });
 
+    eventsPane.events.add("mousedown", () => {
+      hintToggle(false);
+    });
+
     eventsPane.events.add("mouseenter", () => {
       isMouseEnter = true;
     });
