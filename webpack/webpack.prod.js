@@ -1,7 +1,7 @@
 module.exports = {
   mode: "production",
   output: {
-    filename: "ymaps-touch-scroll.min.js",
+    filename: "ymaps-touch-scroll.js",
     library: "ymapsTouchScroll",
     libraryExport: "default",
     libraryTarget: "umd"

@@ -5,7 +5,7 @@ module.exports = {
   mode: "development",
   watch: true,
   output: {
-    path: path.resolve(__dirname, "docs"),
+    path: path.resolve(__dirname, "../docs"),
     library: "ymapsTouchScroll",
     libraryExport: "default",
     libraryTarget: "umd"
