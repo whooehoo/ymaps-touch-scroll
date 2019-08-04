@@ -1,15 +1,11 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   mode: "development",
   watch: true,
-  watchOptions: {
-    ignored: /node_modules/
-  },
-  entry: "./src/ymaps-touch-scroll.js",
   output: {
-    filename: "ymaps-touch-scroll.dev.js",
-    path: path.resolve(__dirname, "src"),
+    path: path.resolve(__dirname, "docs"),
     library: "ymapsTouchScroll",
     libraryExport: "default",
     libraryTarget: "umd"
@@ -18,9 +14,13 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
         use: "babel-loader"
       }
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "src/index.html"
+    })
+  ]
 };

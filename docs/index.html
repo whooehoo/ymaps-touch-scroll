@@ -1,50 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>ymaps-touch-scroll</title>
-  <style>
-    html {
-      height: 100%;
-    }
-
-    body {
-      position: relative;
-      min-height: 100%;
-      margin: 0;
-    }
-
-    #map {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      font: 25px/1.5 Arial, Helvetica, sans-serif;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    function ready() {
-      function mapInit() {
-        var map = new ymaps.Map('map', {
-          center: [55.76, 37.64],
-          zoom: 10
-        });
-
-        ymapsTouchScroll(map);
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ymaps-touch-scroll</title>
+    <style type="text/css">
+      html {
+        height: 100%;
       }
 
-      ymaps.ready(mapInit);
-    }
+      body {
+        position: relative;
+        min-height: 100%;
+        margin: 0;
+      }
 
-    document.addEventListener('DOMContentLoaded', ready);
-  </script>
-  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
-  <script src="./ymaps-touch-scroll.min.js"></script>
-</body>
+      #map {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        font: 25px/1.5 Arial, Helvetica, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function ready() {
+        function mapInit() {
+          var map = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 10
+          });
+
+          ymapsTouchScroll(map);
+        }
+
+        ymaps.ready(mapInit);
+      }
+
+      document.addEventListener("DOMContentLoaded", ready);
+    </script>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
+  <script type="text/javascript" src="main.js"></script></body>
 </html>
