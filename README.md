@@ -7,7 +7,7 @@ Library add touch or/and scroll description block in ymaps
 
 ## Install:
 
-### npm or yarn
+### `npm` or `yarn`
 
 ```sh
 npm i ymaps-touch-scroll
@@ -31,7 +31,7 @@ git clone git@github.com:whooehoo/ymaps-touch-scroll.git
 
 ```html
 <!-- HTML -->
-<script src="path/to/folder/ymaps-touch-scroll/dist/ymaps-touch-scroll.min.js"></script>
+<script src="path/to/folder/ymaps-touch-scroll/dist/ymaps-touch-scroll.js"></script>
 ```
 
 ## Example:
