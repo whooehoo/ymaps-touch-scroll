@@ -2,7 +2,7 @@
 
 Library add touch or/and scroll description block in ymaps
 
-![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/gif.gif)
+![Alt Text](https://github.com/whooehoo/ymaps-touch-scroll/raw/master/map.gif)
 
 ## [DEMO](https://whooehoo.github.io/ymaps-touch-scroll/)
 
