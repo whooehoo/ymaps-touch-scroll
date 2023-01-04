@@ -31,12 +31,14 @@
   </head>
   <body>
     <div id="map"></div>
-    <script>
+    <script type="module">
+      import ymapsTouchScroll from "./index.js";
+
       function ready() {
         function mapInit() {
           var map = new ymaps.Map("map", {
             center: [55.76, 37.64],
-            zoom: 10
+            zoom: 10,
           });
 
           ymapsTouchScroll(map);
@@ -48,5 +50,6 @@
       document.addEventListener("DOMContentLoaded", ready);
     </script>
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU"></script>
-  <script type="text/javascript" src="main.js"></script></body>
+  </body>
+  -->
 </html>
